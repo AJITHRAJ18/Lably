@@ -1,6 +1,6 @@
 # Lably — AI-Powered Lab Report Translator
 
-Lably is a production-ready, privacy-focused platform that helps patients understand their medical lab reports in plain English. Just upload your PDF — Lably explains each biomarker in calm, clear language, thanks to Anthropic Claude AI.
+Lably is a production-ready, privacy-focused platform that helps patients understand their medical lab reports in plain English. Just upload your PDF — Lably explains each biomarker in calm, clear language.
 
 **Key Features:**
 - **PDF Upload:** Patients upload lab reports to get instant, AI-generated explanations for each biomarker.
@@ -15,11 +15,11 @@ Lably is a production-ready, privacy-focused platform that helps patients unders
 
 | Layer      | Technology                    |
 |------------|------------------------------|
-| AI Engine  | Anthropic Claude             |
+| AI Engine  | Gemini                       |
 | Backend    | Node.js + Express            |
 | Frontend   | React + Vite                 |
 | Database   | Supabase (PostgreSQL + Auth) |
-| Payments   | Stripe                       |
+| Payments   | Razorpay                     |
 | Security   | Helmet, CORS, JWT, RLS       |
 
 ---
@@ -70,19 +70,7 @@ npm run install:all
 - Run `schema.sql` in SQL Editor
 - Populate `.env` files with your Supabase keys
 
-### 4. Stripe Setup
-
-- Create an account at [stripe.com](https://stripe.com)
-- Add two products: one-time and monthly
-- Set up Stripe webhook (`/api/webhook`)
-- Add Price IDs and keys to your env files
-
-### 5. Anthropic Setup
-
-- Get API key from [console.anthropic.com](https://console.anthropic.com)
-- Add key to `server/.env`
-
-### 6. Run in Development
+### 4. Run in Development
 
 ```bash
 npm run dev
@@ -100,9 +88,6 @@ npm run dev
 | POST   | `/api/translate`        | JWT      | Translate lab report PDF           |
 | POST   | `/api/checkout/report`  | JSON     | Start $5 checkout session          |
 | POST   | `/api/checkout/subscribe` | JSON   | Start $9/mo subscription           |
-| POST   | `/api/checkout/portal`  | JSON     | Open Stripe billing portal         |
-| POST   | `/api/webhook`          | Stripe   | Stripe webhook handler             |
-
 ---
 
 ## Security
@@ -118,7 +103,7 @@ npm run dev
 
 ## Deployment
 
-### Backend (Railway/Render/Fly.io)
+### Backend (Render)
 
 ```bash
 cd server
@@ -126,7 +111,7 @@ npm start
 ```
 Set env variables via hosting dashboard.
 
-### Frontend (Vercel/Netlify)
+### Frontend (Render)
 
 ```bash
 cd client
@@ -134,10 +119,6 @@ npm run build
 # Deploy the dist/ folder
 ```
 Set `VITE_API_URL` to deployed backend URL.
-
-### Stripe Webhook
-
-Update your webhook in Stripe to the live backend URL.
 
 ---
 
