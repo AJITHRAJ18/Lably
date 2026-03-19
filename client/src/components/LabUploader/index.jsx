@@ -427,7 +427,7 @@ function friendlyError(json) {
   }
 }
 
-export default function LabUploader({ authToken, onPaywallHit, onSignInRequired }) {
+export default function LabUploader({ authToken, credits, onPaywallHit, onSignInRequired }) {
   const [file, setFile] = useState(null);
   const [status, setStatus] = useState("idle"); // idle | uploading | done | error
   const [result, setResult] = useState(null);
@@ -456,6 +456,13 @@ export default function LabUploader({ authToken, onPaywallHit, onSignInRequired 
     if (!authToken) {
       if (onSignInRequired) onSignInRequired();
       else setError("Please sign in to translate your report.");
+      return;
+    }
+
+    // Gate: require credits before upload
+    if (typeof credits === "number" && credits <= 0) {
+      if (onPaywallHit) onPaywallHit();
+      else setError("You need to purchase credits to upload a report.");
       return;
     }
 

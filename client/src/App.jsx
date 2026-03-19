@@ -420,6 +420,7 @@ export default function App() {
         <div style={{ maxWidth: 720, margin: "0 auto", padding: "0 24px 80px" }}>
           <LabUploader
             authToken={session?.access_token ?? null}
+            credits={credits}
             onPaywallHit={() => setShowPaywall(true)}
             onSignInRequired={() => setShowAuth(true)}
           />
