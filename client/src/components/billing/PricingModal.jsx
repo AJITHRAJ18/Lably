@@ -109,12 +109,17 @@ const S = {
 };
 
 export function PricingModal({ onClose, userId, userEmail }) {
-  const handleSuccess = (type) => {
+  const handleSuccess = async (type) => {
     onClose();
-    if (type === "report") {
-      window.location.href = "/upload?unlocked=1";
-    } else {
-      window.location.href = "/dashboard?subscribed=1";
+    // After payment, refresh credits/access from backend
+    try {
+      const apiUrl = import.meta.env.VITE_API_URL;
+      // Optionally, you can call a backend endpoint to refresh user credits/access
+      await fetch(`${apiUrl}/api/health`, { credentials: "include" });
+      // Optionally, trigger a frontend state update or reload
+      window.location.reload();
+    } catch {
+      window.location.reload();
     }
   };
 
