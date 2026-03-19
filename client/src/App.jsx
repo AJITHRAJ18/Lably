@@ -372,7 +372,8 @@ export default function App() {
       return;
     }
 
-    fetch("/api/health") // lightweight check
+    const apiUrl = import.meta.env.VITE_API_URL;
+    fetch(`${apiUrl}/api/health`) // lightweight check
       .catch(() => {})
       .finally(() => {
         // Fetch user billing info — your backend can expose a /api/user/access endpoint

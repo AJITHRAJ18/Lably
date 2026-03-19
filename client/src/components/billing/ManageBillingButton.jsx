@@ -9,7 +9,8 @@ export function ManageBillingButton({ userId }) {
     setLoading(true);
     setError(null);
     try {
-      const res = await fetch("/api/checkout/cancel", {
+      const apiUrl = import.meta.env.VITE_API_URL;
+      const res = await fetch(`${apiUrl}/api/checkout/cancel`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ userId }),

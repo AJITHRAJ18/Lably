@@ -474,7 +474,8 @@ export default function LabUploader({ authToken, onPaywallHit, onSignInRequired 
     const stepTimer2 = setTimeout(() => setProgressStep(2), 4000);
 
     try {
-      const res = await fetch("/api/translate", {
+      const apiUrl = import.meta.env.VITE_API_URL;
+      const res = await fetch(`${apiUrl}/api/translate`, {
         method: "POST",
         headers,
         body: formData,

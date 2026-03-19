@@ -46,8 +46,11 @@ export function usePurchase(userId, userEmail, onSuccess) {
       return;
     }
 
+    const apiUrl = import.meta.env.VITE_API_URL;
     const endpoint =
-      type === "report" ? "/api/checkout/report" : "/api/checkout/subscribe";
+      type === "report"
+        ? `${apiUrl}/api/checkout/report`
+        : `${apiUrl}/api/checkout/subscribe`;
 
     try {
       const res = await fetch(endpoint, {
@@ -76,7 +79,8 @@ export function usePurchase(userId, userEmail, onSuccess) {
           handler: async (response) => {
             // Verify payment on server
             try {
-              const verifyRes = await fetch("/api/checkout/verify", {
+              const apiUrl = import.meta.env.VITE_API_URL;
+              const verifyRes = await fetch(`${apiUrl}/api/checkout/verify`, {
                 method: "POST",
                 headers: { "Content-Type": "application/json" },
                 body: JSON.stringify({
@@ -121,7 +125,8 @@ export function usePurchase(userId, userEmail, onSuccess) {
           theme: { color: "#2d6a4f" },
           handler: async (response) => {
             try {
-              const verifyRes = await fetch("/api/checkout/verify", {
+              const apiUrl = import.meta.env.VITE_API_URL;
+              const verifyRes = await fetch(`${apiUrl}/api/checkout/verify`, {
                 method: "POST",
                 headers: { "Content-Type": "application/json" },
                 body: JSON.stringify({
