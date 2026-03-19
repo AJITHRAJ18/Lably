@@ -8,6 +8,7 @@ import { globalLimiter } from "../middleware/rateLimiter.js";
 import healthRouter from "./health.js";
 import translateRouter from "./translate.js";
 import checkoutRouter from "./checkout.razorpay.js";
+import adminRouter from "./admin.js";
 
 const router = express.Router();
 
@@ -25,5 +26,8 @@ router.use("/translate", translateRouter);
 
 // Razorpay checkout routes (/api/checkout/report, /subscribe, /verify, /cancel)
 router.use("/checkout", checkoutRouter);
+
+// Admin API for user billing updates
+router.use("/admin", adminRouter);
 
 export default router;
