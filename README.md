@@ -1,21 +1,26 @@
-# Lably — Enterprise Lab Results Translator
+# Lably — AI-Powered Lab Report Translator
 
-> AI-powered medical lab report simplification — built for production.
+Lably is a production-ready, privacy-focused platform that helps patients understand their medical lab reports in plain English. Just upload your PDF — Lably explains each biomarker in calm, clear language.
 
-Lably lets patients upload their lab report PDFs and instantly get plain-English translations of every biomarker, powered by **Claude (Anthropic)**. Users can pay-per-report ($5) or subscribe ($9/mo) via **Stripe**, with results and history stored in **Supabase**.
+**Key Features:**
+- **PDF Upload:** Patients upload lab reports to get instant, AI-generated explanations for each biomarker.
+- **Simple Language:** All results are translated for non-specialists—no jargon or alarming language.
+- **Payments:** Users can pay per report (₹10, or $5) or subscribe monthly via Stripe (₹200, or $9/mo).
+- **Report History:** Personal results saved on Supabase; strict row-level security ensures users only access their own history.
+- **Secure:** Sensitive files are processed in-memory and never stored. Security-first backend (Helmet, CORS, JWT, rate limiting).
 
 ---
 
 ## Stack
 
-| Layer | Technology |
-|-------|-----------|
-| AI Engine | Anthropic Claude |
-| Backend | Node.js + Express |
-| Frontend | React + Vite |
-| Database | Supabase (PostgreSQL + Auth) |
-| Payments | Stripe (one-time + subscriptions) |
-| Security | Helmet, CORS, Rate Limiting, JWT Auth |
+| Layer      | Technology                    |
+|------------|------------------------------|
+| AI Engine  | Gemini                       |
+| Backend    | Node.js + Express            |
+| Frontend   | React + Vite                 |
+| Database   | Supabase (PostgreSQL + Auth) |
+| Payments   | Razorpay                     |
+| Security   | Helmet, CORS, JWT, RLS       |
 
 ---
 
@@ -23,134 +28,97 @@ Lably lets patients upload their lab report PDFs and instantly get plain-English
 
 ```
 lably/
-├── server/                  # Express API
+├── server/                  # Express API (Node.js)
 │   ├── src/
-│   │   ├── config/          # Env validation & app config
+│   │   ├── config/          # App/env config
 │   │   ├── middleware/      # Auth, rate limiter, error handler
-│   │   ├── routes/          # API routes
-│   │   └── services/        # Claude, PDF, Supabase, Stripe
+│   │   ├── routes/          # API endpoints
+│   │   └── services/        # Claude, PDF parsing, DB, Stripe
 │   ├── package.json
-│   └── .env                 # Server env vars (git-ignored)
-├── client/                  # React + Vite frontend
+│   └── .env                 # Server env vars (not versioned)
+├── client/                  # React (Vite) UI
 │   ├── src/
-│   │   ├── components/
-│   │   │   ├── lab/         # MarkerCard, StatusBadge, etc.
-│   │   │   ├── stripe/      # PricingModal, PaywallGate, etc.
-│   │   │   └── LabUploader/ # Main upload component
-│   │   ├── hooks/           # usePurchase
-│   │   └── constants/       # Status colours
+│   │   ├── components/      # Lab upload, results, payment UI
+│   │   ├── hooks/           # Custom hooks (e.g. purchase logic)
+│   │   └── constants/       # UI constants
 │   ├── vite.config.js
-│   └── .env                 # Client env vars (git-ignored)
+│   └── .env                 # Client env vars (not versioned)
 ├── schema.sql               # Supabase DB schema
-└── .env.example             # Template — copy to server/.env & client/.env
+└── .env.example             # Template for setup
 ```
 
 ---
 
 ## Quick Start
 
-### 1. Clone & install
+### 1. Clone & Install
 
 ```bash
-git clone https://github.com/your-org/lably.git
-cd lably
+git clone https://github.com/AJITHRAJ18/Lably.git
+cd Lably
 npm run install:all
 ```
 
-### 2. Set up environment variables
+### 2. Setup Environment Variables
 
-```bash
-# Server
-cp .env.example server/.env
-# Edit server/.env with your keys
+- Copy `.env.example` to `server/.env` and `client/.env`
+- Fill in keys for Supabase, Stripe, and Anthropic
 
-# Client
-cp .env.example client/.env
-# Edit client/.env with your Supabase public keys
-```
+### 3. Supabase Setup
 
-### 3. Set up Supabase
+- Create project at [supabase.com](https://supabase.com)
+- Run `schema.sql` in SQL Editor
+- Populate `.env` files with your Supabase keys
 
-1. Create a project at [supabase.com](https://supabase.com)
-2. Go to **SQL Editor** and run the contents of `schema.sql`
-3. Copy your **Project URL** and **Service Role Key** into `server/.env`
-4. Copy your **Project URL** and **Anon Key** into `client/.env`
-
-### 4. Set up Stripe
-
-1. Create an account at [stripe.com](https://stripe.com)
-2. Create two products:
-   - **Lably Report** — one-time, ₹10.00 → copy Price ID to `STRIPE_PRICE_REPORT`
-   - **Lably Monthly** — recurring, ₹200.00/month → copy Price ID to `STRIPE_PRICE_MONTHLY`
-3. Set up a webhook at `https://your-domain.com/api/webhook` with events:
-   - `checkout.session.completed`
-   - `invoice.payment_succeeded`
-   - `customer.subscription.deleted`
-   - `invoice.payment_failed`
-
-### 5. Set up Anthropic
-
-1. Get an API key from [console.anthropic.com](https://console.anthropic.com)
-2. Add to `server/.env` as `ANTHROPIC_API_KEY`
-
-### 6. Run in development
+### 4. Run in Development
 
 ```bash
 npm run dev
-# API: http://localhost:3001
-# UI:  http://localhost:5173
+# API runs at: http://localhost:3001
+# UI runs at:  http://localhost:5173
 ```
 
 ---
 
 ## API Endpoints
 
-| Method | Endpoint | Auth | Description |
-|--------|----------|------|-------------|
-| `GET` | `/api/health` | None | Health check |
-| `POST` | `/api/translate` | JWT | Translate a lab report PDF |
-| `POST` | `/api/checkout/report` | JSON body | Create $5 checkout session |
-| `POST` | `/api/checkout/subscribe` | JSON body | Create $9/mo subscription |
-| `POST` | `/api/checkout/portal` | JSON body | Open Stripe billing portal |
-| `POST` | `/api/webhook` | Stripe sig | Stripe webhook handler |
-
+| Method | Endpoint                | Auth     | Description                        |
+|--------|-------------------------|----------|------------------------------------|
+| GET    | `/api/health`           | None     | Health check                       |
+| POST   | `/api/translate`        | JWT      | Translate lab report PDF           |
+| POST   | `/api/checkout/report`  | JSON     | Start $5 checkout session          |
+| POST   | `/api/checkout/subscribe` | JSON   | Start $9/mo subscription           |
 ---
 
 ## Security
 
-- **Helmet** — sets 11 HTTP security headers
-- **CORS** — whitelisted origin only
-- **Rate limiting** — 10 translate requests/hour per IP, 20 checkout/hour
-- **JWT auth** — Supabase JWT verified server-side on every protected route
-- **No PDF storage** — files processed in-memory and never persisted
-- **Row-level security** — users can only read their own report history
+- **Helmet:** Sets HTTP security headers
+- **CORS:** Only whitelisted origins
+- **Rate Limiting:** 10 translations/hour/IP, 20 checkouts/hour
+- **JWT Auth:** Every protected route checked for Supabase JWT
+- **No PDF Storage:** Files processed in memory, never persisted
+- **Row-Level Security:** Users access only their own data
 
 ---
 
 ## Deployment
 
-### Backend (Railway / Render / Fly.io)
+### Backend (Render)
 
 ```bash
 cd server
 npm start
 ```
+Set env variables via hosting dashboard.
 
-Set all environment variables in your hosting dashboard.
-
-### Frontend (Vercel / Netlify)
+### Frontend (Render)
 
 ```bash
 cd client
 npm run build
 # Deploy the dist/ folder
 ```
-
-Set `VITE_API_URL` to your deployed backend URL.
-
-### Stripe Webhook
-
-After deploying, update the webhook URL in the Stripe dashboard to your production URL.
+Set `VITE_API_URL` to deployed backend URL.
 
 ---
 
