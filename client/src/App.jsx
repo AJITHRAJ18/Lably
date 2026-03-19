@@ -430,7 +430,6 @@ export default function App() {
       {/* Footer / Contact */}
       <footer
         style={{
-          textAlign: "center",
           padding: "32px 24px",
           borderTop: "1px solid #e0ddd5",
           fontSize: 13,
@@ -438,15 +437,61 @@ export default function App() {
           lineHeight: 1.6,
         }}
       >
-        <div style={{ marginBottom: 4 }}>Built by <strong style={{ color: "#555" }}>Ajithraj</strong></div>
-        <div>
-          Contact:{" "}
-          <a
-            href="mailto:ajithrajepm2218@gmail.com"
-            style={{ color: "#2d6a4f", textDecoration: "none" }}
+        <div
+          style={{
+            maxWidth: 960,
+            margin: "0 auto",
+            display: "flex",
+            flexWrap: "wrap",
+            alignItems: "center",
+            justifyContent: "space-between",
+            gap: 12,
+          }}
+        >
+          <div>
+            <div style={{ marginBottom: 4 }}>
+              Built by{" "}
+              <strong style={{ color: "#555" }}>
+                Ajithraj
+              </strong>
+            </div>
+            <div>
+              Contact:{" "}
+              <a
+                href="mailto:ajithrajepm2218@gmail.com"
+                style={{ color: "#2d6a4f", textDecoration: "none" }}
+              >
+                ajithrajepm2218@gmail.com
+              </a>
+            </div>
+          </div>
+
+          <div
+            style={{
+              display: "flex",
+              flexWrap: "wrap",
+              gap: 16,
+            }}
           >
-            ajithrajepm2218@gmail.com
-          </a>
+            <a
+              href="/about.html"
+              style={{ color: "#777", textDecoration: "none" }}
+            >
+              About
+            </a>
+            <a
+              href="/privacy.html"
+              style={{ color: "#777", textDecoration: "none" }}
+            >
+              Privacy
+            </a>
+            <a
+              href="/terms.html"
+              style={{ color: "#777", textDecoration: "none" }}
+            >
+              Terms
+            </a>
+          </div>
         </div>
       </footer>
 
