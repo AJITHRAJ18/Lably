@@ -38,6 +38,24 @@
       gtag('js', new Date());
       gtag('config', 'G-KB6XESKEKE');
     </script>
+    <script>
+      // Route on-site search keywords to dedicated SEO landing pages.
+      // Example: https://labinenglish.com/?q=medical%20report%20analysis
+      (function () {
+        var params = new URLSearchParams(window.location.search);
+        var q = (params.get("q") || "").toLowerCase().replace(/\s+/g, " ").trim();
+        if (!q) return;
+
+        if (q.indexOf("medical report analysis") !== -1) {
+          window.location.replace("/medical-report-analysis.html");
+          return;
+        }
+        if (q.indexOf("medical report summary") !== -1) {
+          window.location.replace("/medical-report-summary.html");
+          return;
+        }
+      })();
+    </script>
   </head>
   <body>
     <div id="root"></div>
