@@ -113,6 +113,16 @@ CREATE TABLE IF NOT EXISTS public.payment_events (
   processed_at TIMESTAMPTZ DEFAULT NOW()
 );
 
+-- Row-level security: users can only read their own payment events
+ALTER TABLE public.payment_events ENABLE ROW LEVEL SECURITY;
+
+DROP POLICY IF EXISTS "Users see own payment events" ON public.payment_events;
+CREATE POLICY "Users see own payment events" ON public.payment_events
+  FOR SELECT USING (auth.uid() = user_id);
+
+-- INSERT is done server-side with the service role key (bypasses RLS).
+-- No INSERT policy needed — service role always bypasses RLS.
+
 
 -- ── 6. Additional indexes for performance ────────────────────
 
@@ -129,7 +139,8 @@ CREATE INDEX IF NOT EXISTS idx_users_email
 
 -- ── 7. Quick access view ───────────────────────────────────────
 
-CREATE OR REPLACE VIEW public.user_billing AS
+CREATE OR REPLACE VIEW public.user_billing
+WITH (security_invoker = true) AS
 SELECT
   id,
   email,
@@ -143,3 +154,17 @@ SELECT
     ELSE 'free'
   END AS access_level
 FROM public.users;
+
+
+-- ── 8. Secure the _view_backups table ──────────────────────────
+-- Enable RLS on the _view_backups table to prevent unauthorized access
+
+ALTER TABLE public._view_backups ENABLE ROW LEVEL SECURITY;
+
+-- Drop existing policies if any
+DROP POLICY IF EXISTS "No public access to view backups" ON public._view_backups;
+
+-- Restrictive policy: no direct access via PostgREST
+-- Only service_role or authenticated admins can access this table
+CREATE POLICY "No public access to view backups" ON public._view_backups
+  FOR ALL USING (false);
